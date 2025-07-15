@@ -5,11 +5,6 @@ services:
     env: python
     buildCommand: ""
     startCommand: "gunicorn src.main:app"
-    envVars:
-      - key: SQLALCHEMY_DATABASE_URI
-        fromDatabase:
-          name: agendador-db
-          property: connectionString
 
 databases:
   - name: agendador-db
