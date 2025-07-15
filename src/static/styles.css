@@ -570,13 +570,16 @@ input::placeholder, textarea::placeholder {
 
 
 /* Ajustes para telas maiores (desktop) */
+/* Ajustes para telas maiores (desktop) */
 @media (min-width: 769px) {
     .login-container {
         background-position: center center; /* Centraliza a imagem para desktop */
+        background-size: contain; /* Garante que a imagem inteira seja visível */
     }
 
     #mainScreen {
         background-position: center center; /* Centraliza a imagem para desktop */
+        background-size: contain; /* Garante que a imagem inteira seja visível */
     }
 }
 
