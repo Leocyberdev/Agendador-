@@ -1,6 +1,8 @@
 
 html, body {
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 * {
@@ -11,13 +13,11 @@ html, body {
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    background-color: #f9fafb;
     color: #374151;
     line-height: 1.6;
-    margin: 0;
-    padding: 0;
 }
 
+/* Container principal */
 .container {
     max-width: none;
     margin: 0;
@@ -28,6 +28,79 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
+}
+
+/* Estilos para telas */
+.screen {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Tela de login */
+#loginScreen {
+    margin: 0;
+    padding: 0;
+}
+
+.login-container {
+    background: url('/static/imagens/IMG_20250714_190112_060.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+/* Tela principal */
+#mainScreen {
+    min-height: 100vh;
+    background: url('/static/imagens/IMG_20250714_190117_612.jpg') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    position: relative;
+}
+
+#mainScreen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}
+
+#mainScreen > * {
+    position: relative;
+    z-index: 2;
 }
 
 .header {
