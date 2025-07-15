@@ -579,7 +579,6 @@ input::placeholder, textarea::placeholder {
 
     #mainScreen {
         background-position: center center; /* Centraliza a imagem para desktop */
-        background-size: contain; /* Garante que a imagem inteira seja visível */
     }
 }
 
