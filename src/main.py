@@ -23,7 +23,7 @@ app.register_blueprint(reunioes_bp, url_prefix='/api')
 
 # Configuração do banco de dados
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("SQLALCHEMY_DATABASE_URI")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+print(f"DEBUG: SQLALCHEMY_DATABASE_URI = {os.environ.get('SQLALCHEMY_DATABASE_URI')}")
 db.init_app(app)
 
 def create_admin_user():
