@@ -3,19 +3,13 @@ services:
   - type: web
     name: agendador
     env: python
-    buildCommand: "pip install -r src/requirements.txt"
-    startCommand: "gunicorn src.main:app --bind 0.0.0.0:$PORT"
+    buildCommand: ""
+    startCommand: "gunicorn src.main:app"
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.0
-      - key: FLASK_ENV
-        value: production
-      - key: DATABASE_URL
+      - key: SQLALCHEMY_DATABASE_URI
         fromDatabase:
           name: agendador-db
           property: connectionString
 
 databases:
   - name: agendador-db
-    databaseName: agendador
-    user: agendador
