@@ -277,12 +277,18 @@ input::placeholder, textarea::placeholder {
     padding: 0;
 }
 
-.login-container {
+
+#mainScreen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: url('images/login_background.png') center/cover no-repeat;
+    background: url('/static/imagens/IMG-20250716-WA0005.jpg') center/cover no-repeat;
     position: relative;
     margin: 0;
     padding: 0;
@@ -314,17 +320,10 @@ input::placeholder, textarea::placeholder {
 
 /* Aplicar segunda imagem como fundo das telas após o login */
 #mainScreen {
-    background: url('images/dashboard_background.png') center/cover no-repeat;
+    background: url('/static/imagens/IMG_20250714_190117_612.jpg') center/cover no-repeat;
     position: relative;
     min-height: 100vh;
-}
-
-#mainScreen::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+}right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.5);
     z-index: 1;
