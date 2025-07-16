@@ -324,7 +324,7 @@ input::placeholder, textarea::placeholder {
 /* Aplicar segunda imagem como fundo das telas após o login */
 #mainScreen {
     height: 100vh;
-    background: url('/static/imagens/IMG_20250714_190117_612.jpg') center/cover no-repeat;
+    background: url('/static/imagens/IMG_20250716_170041260_HDR.jpg') center/cover no-repeat;
 }
 }
 
