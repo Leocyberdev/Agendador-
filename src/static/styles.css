@@ -43,9 +43,13 @@ body {
     padding: 0;
 }
 
-.login-container {
+..login-container {
     background: url('/static/imagens/IMG_20250714_190112_060.jpg') no-repeat center center;
-    background-size: cover;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
     background-attachment: fixed;
     min-height: 100vh;
     display: flex;
@@ -80,9 +84,11 @@ body {
 
 /* Tela principal */
 #mainScreen {
-    min-height: 100vh;
-    background: url('/static/imagens/IMG_20250714_190117_612.jpg') no-repeat center center;
-    background-size: cover;
+    #mainScreen {
+    height: 100vh;
+    background: url('/static/imagens/IMG_20250714_190117_612.jpg') center center no-repeat;
+    background-size: contain;
+}
     background-attachment: fixed;
     position: relative;
 }
