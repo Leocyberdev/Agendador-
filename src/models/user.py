@@ -62,4 +62,11 @@ class Reuniao(db.Model):
             'criador_nome': self.criador.username if self.criador else None,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+class Meeting(db.Model):
+    # ... (campos existentes)
+    date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False) # NOVO CAMPO
+    end_time = db.Column(db.Time, nullable=False)   # NOVO CAMPO
+    location = db.Column(db.String(100), nullable=True)
+    # ... (campos existentes)
 
