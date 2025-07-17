@@ -4,7 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import logging
-from models import Usuario  # ajuste se o import for diferente
+from src.models.user import User  # ajuste se o import for diferente
 from app import db          # ajuste se você importar o db de outro lugar
 import threading
 
@@ -105,9 +105,9 @@ Sistema Agendador de Reuniões
         """
 
         def enviar():
-            for usuario in usuarios:
-                if usuario.email:
-                    self.send_email(usuario.email, subject, body)
+            for user in usuarios:
+                if user.email:
+                    self.send_email(user.email, subject, body)
 
         # Envia em thread separada para não travar o app
         threading.Thread(target=enviar).start()
