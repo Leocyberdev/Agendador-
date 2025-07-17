@@ -47,7 +47,7 @@ def create_reuniao():
     
     db.session.add(reuniao)
     db.session.commit()
-  email_service.send_meeting_notification_to_all({
+    email_service.send_meeting_notification_to_all({
     "titulo": titulo,
     "data": data_str,
     "hora": hora_str,
