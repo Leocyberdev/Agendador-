@@ -76,7 +76,7 @@ Sistema Agendador de Reuniões
 
     def send_meeting_notification_to_all(self, meeting_data):
         # Pega todos os usuários
-        usuarios = db.session.query(Usuario).all()
+        usuarios = db.session.query(User).all()
         subject = f"Nova Reunião Agendada: {meeting_data.get('titulo', 'Sem título')}"
         data_formatada = meeting_data.get('data', 'Data não informada')
         hora_formatada = meeting_data.get('hora', 'Hora não informada')
