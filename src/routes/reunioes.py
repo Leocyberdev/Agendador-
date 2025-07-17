@@ -8,55 +8,47 @@ import threading # Adicionado para envio de email em thread
 reunioes_bp = Blueprint("reunioes", __name__)
 email_service = EmailService()
 
-@reunioes_bp.route("/reunioes", methods=["GET"])
-@login_required
-def get_reunioes():
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Usuário não autenticado"}), 401
+from datetime import datetime, date, time # Certifique-se de importar time
 
-    reunioes = Meeting.query.filter_by(created_by=user_id).order_by(Meeting.date.asc(), Meeting.start_time.asc()).all()
-    return jsonify([reuniao_to_dict(reuniao) for reuniao in reunioes]), 200
+# ...
 
-@reunioes_bp.route("/reunioes", methods=["POST"])
+@reunioes_bp.route('/reunioes', methods=['POST'])
 @login_required
 def create_reuniao():
     data = request.json
-    titulo = data.get("titulo")
-    descricao = data.get("descricao")
-    data_reuniao_str = data.get("data")
-    hora_inicio_str = data.get("hora_inicio")
-    hora_termino_str = data.get("hora_termino")
-    local = data.get("local")
-    participantes_str = data.get("participantes")
+    titulo = data.get('titulo')
+    data_reuniao_str = data.get('data')
+    hora_inicio_str = data.get('hora_inicio')
+    hora_termino_str = data.get('hora_termino')
+    local = data.get('local')
+    participantes = data.get('participantes')
+    descricao = data.get('descricao')
+    criado_por = session.get('user_id')
 
-    if not all([titulo, data_reuniao_str, hora_inicio_str, hora_termino_str]):
-        return jsonify({"error": "Título, data, hora de início e hora de término são obrigatórios"}), 400
+    if not all([titulo, data_reuniao_str, hora_inicio_str, hora_termino_str, local, participantes, descricao, criado_por]):
+        return jsonify({'error': 'Todos os campos são obrigatórios'}), 400
 
+    # Converter strings de data e hora para objetos date e time
     try:
-        data_reuniao = datetime.strptime(data_reuniao_str, "%Y-%m-%d").date()
-        hora_inicio = datetime.strptime(hora_inicio_str, "%H:%M").time()
-        hora_termino = datetime.strptime(hora_termino_str, "%H:%M").time()
+        data_reuniao = datetime.strptime(data_reuniao_str, '%Y-%m-%d').date()
+        hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
+        hora_termino = datetime.strptime(hora_termino_str, '%H:%M').time()
     except ValueError:
-        return jsonify({"error": "Formato de data ou hora inválido. Use YYYY-MM-DD para data e HH:MM para hora."}), 400
+        return jsonify({'error': 'Formato de data ou hora inválido. Use YYYY-MM-DD para data e HH:MM para hora.'}), 400
 
-    user_id = session.get("user_id")
-    if not user_id:
-        return jsonify({"error": "Usuário não autenticado"}), 401
-
-    nova_reuniao = Meeting(
-        title=titulo,
-        description=descricao,
-        date=data_reuniao,
-        start_time=hora_inicio,
-        end_time=hora_termino,
-        location=local,
-        participants=participantes_str,
-        created_by=user_id
+    new_reuniao = Meeting(
+        titulo=titulo,
+        data=data_reuniao,
+        hora_inicio=hora_inicio, # Novo campo
+        hora_termino=hora_termino, # Novo campo
+        local=local,
+        participantes=participantes,
+        descricao=descricao,
+        created_by=criado_por
     )
-
-    db.session.add(nova_reuniao)
+    db.session.add(new_reuniao)
     db.session.commit()
+    return jsonify(new_reuniao.to_dict()), 201
 
     # Enviar notificação por e-mail em uma thread separada
     if participantes_str:
