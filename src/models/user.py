@@ -64,14 +64,26 @@ class Reuniao(db.Model):
         }
 class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    date = db.Column(db.Date, nullable=False)
-    start_time = db.Column(db.Time, nullable=False) # ADICIONE ESTA LINHA
-    end_time = db.Column(db.Time, nullable=False)   # ADICIONE ESTA LINHA
-    location = db.Column(db.String(100), nullable=True)
-    participants = db.Column(db.Text, nullable=True)
-    created_by = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    titulo = db.Column(db.String(120), nullable=False)
+    data = db.Column(db.Date, nullable=False)
+    hora_inicio = db.Column(db.Time, nullable=False) # Nova coluna
+    hora_termino = db.Column(db.Time, nullable=False) # Nova coluna
+    local = db.Column(db.String(120), nullable=False)
+    participantes = db.Column(db.String(500), nullable=False)
+    descricao = db.Column(db.String(1000), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'titulo': self.titulo,
+            'data': self.data.isoformat(),
+            'hora_inicio': self.hora_inicio.isoformat(), # Ajustado
+            'hora_termino': self.hora_termino.isoformat(), # Ajustado
+            'local': self.local,
+            'participantes': self.participantes,
+            'descricao': self.descricao,
+            'created_by': self.created_by
+        }
 
 
