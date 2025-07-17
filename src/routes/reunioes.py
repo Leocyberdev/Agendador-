@@ -2,6 +2,8 @@ from flask import Blueprint, jsonify, request, session
 from src.models.user import User, Reuniao, db
 from src.routes.auth import login_required
 from datetime import datetime
+from src.email_service import email_service
+
 
 reunioes_bp = Blueprint('reunioes', __name__)
 
@@ -45,6 +47,15 @@ def create_reuniao():
     
     db.session.add(reuniao)
     db.session.commit()
+  email_service.send_meeting_notification_to_all({
+    "titulo": titulo,
+    "data": data_str,
+    "hora": hora_str,
+    "local": local,
+    "participantes": participantes,
+    "descricao": descricao
+})
+    
 
     return jsonify({
         'message': 'Reunião criada com sucesso',
