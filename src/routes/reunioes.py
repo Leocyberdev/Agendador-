@@ -17,32 +17,35 @@ def get_reunioes():
 @login_required
 def create_reuniao():
     data = request.json
-    titulo = data.get('titulo')
-    data_str = data.get('data')
-    hora_str = data.get('hora')
-    local = data.get('local', '')
-    participantes = data.get('participantes', '')
-    descricao = data.get('descricao', '')
+    titulo = data.get("titulo")
+    data_str = data.get("data")
+    hora_inicio_str = data.get("hora_inicio") # ADICIONADO
+    hora_termino_str = data.get("hora_termino") # ADICIONADO
+    local = data.get("local", "")
+    participantes = data.get("participantes", "")
+    descricao = data.get("descricao", "")
 
-    if not titulo or not data_str or not hora_str:
-        return jsonify({'error': 'Título, data e hora são obrigatórios'}), 400
+    if not titulo or not data_str or not hora_inicio_str or not hora_termino_str: # MODIFICADO
+        return jsonify({"error": "Título, data, hora de início e hora de término são obrigatórios"}), 400 # MODIFICADO
 
     try:
         # Converter strings para objetos date e time
-        data_obj = datetime.strptime(data_str, '%Y-%m-%d').date()
-        hora_obj = datetime.strptime(hora_str, '%H:%M').time()
+        data_obj = datetime.strptime(data_str, "%Y-%m-%d").date()
+        hora_inicio_obj = datetime.strptime(hora_inicio_str, "%H:%M").time() # ADICIONADO
+        hora_termino_obj = datetime.strptime(hora_termino_str, "%H:%M").time() # ADICIONADO
     except ValueError:
-        return jsonify({'error': 'Formato de data ou hora inválido'}), 400
+        return jsonify({"error": "Formato de data ou hora inválido"}), 400
 
     # Criar nova reunião
     reuniao = Reuniao(
         titulo=titulo,
         data=data_obj,
-        hora=hora_obj,
+        hora_inicio=hora_inicio_obj, # ADICIONADO
+        hora_termino=hora_termino_obj, # ADICIONADO
         local=local,
         participantes=participantes,
         descricao=descricao,
-        created_by=session['user_id']
+        created_by=session["user_id"]
     )
     
     db.session.add(reuniao)
@@ -50,7 +53,8 @@ def create_reuniao():
     email_service.send_meeting_notification_to_all({
     "titulo": titulo,
     "data": data_str,
-    "hora": hora_str,
+    "hora_inicio": hora_inicio_str, # ADICIONADO
+    "hora_termino": hora_termino_str, # ADICIONADO
     "local": local,
     "participantes": participantes,
     "descricao": descricao
@@ -58,12 +62,13 @@ def create_reuniao():
     
 
     return jsonify({
-        'message': 'Reunião criada com sucesso',
-        'reuniao': reuniao.to_dict()
+        "message": "Reunião criada com sucesso",
+        "reuniao": reuniao.to_dict()
     }), 201
 
-@reunioes_bp.route('/reunioes/<int:reuniao_id>', methods=['GET'])
+@reunioes_bp.route("/reunioes/<int:reuniao_id>", methods=["GET"])
 @login_required
+
 def get_reuniao(reuniao_id):
     reuniao = Reuniao.query.get_or_404(reuniao_id)
     return jsonify(reuniao.to_dict()), 200
