@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendador de Reuniões</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Tela de Login -->
+        <div id="loginScreen" class="screen">
+            <div class="login-container">
+                <div class="login-card">
+                    <h1>Agendador de Reuniões</h1>
+                    <p>Faça login para acessar o sistema</p>
+                    
+                    <form id="loginForm" class="form">
+                        <div class="form-group">
+                            <label for="loginUsername">Usuário</label>
+                            <input type="text" id="loginUsername" name="username" placeholder="Digite seu usuário" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="loginPassword">Senha</label>
+                            <input type="password" id="loginPassword" name="password" placeholder="Digite sua senha" required>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary">
+                            🔐 Entrar
+                        </button>
+                    </form>
+                    
+                    <div id="loginError" class="error-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tela Principal -->
+        <div id="mainScreen" class="screen" style="display: none;">
+            <header class="header">
+                <div class="header-content">
+                    <div>
+                        <h1>Agendador de Reuniões</h1>
+                        <p>Organize suas reuniões de trabalho de forma simples e eficiente</p>
+                    </div>
+                    <div class="user-info">
+                        <span id="userWelcome"></span>
+                        <button id="logoutBtn" class="btn-secondary">Sair</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Menu de Navegação -->
+            <nav class="nav-menu">
+                <button id="navReunioes" class="nav-btn active">📅 Reuniões</button>
+                <button id="navUsuarios" class="nav-btn" style="display: none;">👥 Usuários</button>
+            </nav>
+
+            <!-- Seção de Reuniões -->
+            <div id="reunioesSection" class="section">
+                <div class="main-content">
+                    <!-- Formulário para nova reunião -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>➕ Nova Reunião</h2>
+                            <p>Preencha os dados para agendar uma nova reunião</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="reuniaoForm" class="form">
+                                <div class="form-group">
+                                    <label for="titulo">Título da Reunião *</label>
+                                    <input type="text" id="titulo" name="titulo" placeholder="Ex: Reunião de planejamento" required>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="data">Data *</label>
+                                        <input type="date" id="data" name="data" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hora_inicio">Hora Início *</label>
+                                        <input type="time" id="hora_inicio" name="hora_inicio" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="hora_termino">Hora Término *</label>
+                                        <input type="time" id="hora_termino" name="hora_termino" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="local">Local</label>
+                                    <input type="text" id="local" name="local" placeholder="Ex: Sala de reuniões A, Google Meet, etc.">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="participantes">Participantes</label>
+                                    <input type="text" id="participantes" name="participantes" placeholder="Ex: João, Maria, Pedro">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="descricao">Descrição</label>
+                                    <textarea id="descricao" name="descricao" placeholder="Descreva o objetivo e agenda da reunião" rows="3"></textarea>
+                                </div>
+
+                                <button type="submit" class="btn-primary">
+                                    ➕ Agendar Reunião
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lista de reuniões -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>📅 Reuniões Agendadas (<span id="contadorReunioes">0</span>)</h2>
+                            <p>Suas próximas reuniões de trabalho</p>
+                        </div>
+                        <div class="card-content">
+                            <div id="listaReunioes" class="reunioes-lista">
+                                <div class="loading">Carregando reuniões...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Usuários (apenas para admin) -->
+            <div id="usuariosSection" class="section" style="display: none;">
+                <div class="main-content">
+                    <!-- Formulário para criar usuário -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>👤 Criar Usuário</h2>
+                            <p>Adicione novos usuários ao sistema</p>
+                        </div>
+                        <div class="card-content">
+                            <form id="userForm" class="form">
+                                <div class="form-group">
+                                    <label for="newUsername">Nome de Usuário *</label>
+                                    <input type="text" id="newUsername" name="username" placeholder="Digite o nome de usuário" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newEmail">Email *</label>
+                                    <input type="email" id="newEmail" name="email" placeholder="Digite o email" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newPassword">Senha *</label>
+                                    <input type="password" id="newPassword" name="password" placeholder="Digite a senha" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="isAdmin" name="is_admin">
+                                        <span>Usuário Administrador</span>
+                                    </label>
+                                </div>
+
+                                <button type="submit" class="btn-primary">
+                                    👤 Criar Usuário
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lista de usuários -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>👥 Usuários do Sistema</h2>
+                            <p>Gerencie os usuários cadastrados</p>
+                        </div>
+                        <div class="card-content">
+                            <div id="listaUsuarios" class="usuarios-lista">
+                                <div class="loading">Carregando usuários...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p>Agendador de Reuniões - Organize seu tempo de trabalho</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
