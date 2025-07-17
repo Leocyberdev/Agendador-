@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, session
 from src.models.user import User, Reuniao, db
 from src.routes.auth import login_required
-from datetime import datetime
+from datetime import datetime, date, time
 from src.email_service import email_service
 
 
