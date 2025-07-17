@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import logging
 from src.models.user import User  # ajuste se o import for diferente
-from app import db          # ajuste se você importar o db de outro lugar
+from src.models.user import db# ajuste se você importar o db de outro lugar
 import threading
 
 # Configurar logging
