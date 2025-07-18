@@ -10,7 +10,7 @@ reunioes_bp = Blueprint('reunioes', __name__)
 @reunioes_bp.route('/reunioes', methods=['GET'])
 @login_required
 def get_reunioes():
-    reunioes = Reuniao.query.order_by(Reuniao.data.asc(), Reuniao.hora.asc()).all()
+    reunioes = Reuniao.query.order_by(Reuniao.data.asc(), Reuniao.hora_inicio.asc()).all()
     return jsonify([reuniao.to_dict() for reuniao in reunioes]), 200
 
 @reunioes_bp.route('/reunioes', methods=['POST'])
@@ -86,7 +86,8 @@ def update_reuniao(reuniao_id):
     data = request.json
     titulo = data.get('titulo')
     data_str = data.get('data')
-    hora_str = data.get('hora')
+    hora_inicio_str = data.get('hora_inicio')
+    hora_termino_str = data.get('hora_termino')
 
     if titulo:
         reuniao.titulo = titulo
@@ -97,11 +98,17 @@ def update_reuniao(reuniao_id):
         except ValueError:
             return jsonify({'error': 'Formato de data inválido'}), 400
     
-    if hora_str:
+    if hora_inicio_str:
         try:
-            reuniao.hora = datetime.strptime(hora_str, '%H:%M').time()
+            reuniao.hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
         except ValueError:
-            return jsonify({'error': 'Formato de hora inválido'}), 400
+            return jsonify({'error': 'Formato de hora de início inválido'}), 400
+
+    if hora_termino_str:
+        try:
+            reuniao.hora_termino = datetime.strptime(hora_termino_str, '%H:%M').time()
+        except ValueError:
+            return jsonify({'error': 'Formato de hora de término inválido'}), 400
 
     reuniao.local = data.get('local', reuniao.local)
     reuniao.participantes = data.get('participantes', reuniao.participantes)
