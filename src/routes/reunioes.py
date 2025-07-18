@@ -3,6 +3,8 @@ from src.models.user import User, Reuniao, db
 from src.routes.auth import login_required
 from datetime import datetime, date, time
 from src.email_service import email_service
+from sqlalchemy import or_, and_
+
 
 
 reunioes_bp = Blueprint('reunioes', __name__)
@@ -35,6 +37,23 @@ def create_reuniao():
         hora_termino_obj = datetime.strptime(hora_termino_str, "%H:%M").time() # ADICIONADO
     except ValueError:
         return jsonify({"error": "Formato de data ou hora inválido"}), 400
+
+    # Verificar conflito de horário
+    conflito = Reuniao.query.filter(
+        Reuniao.data == data_obj,
+        or_(
+            and_(Reuniao.hora_inicio <= hora_inicio_obj, Reuniao.hora_termino > hora_inicio_obj),
+            and_(Reuniao.hora_inicio < hora_termino_obj, Reuniao.hora_termino >= hora_termino_obj),
+            and_(Reuniao.hora_inicio >= hora_inicio_obj, Reuniao.hora_termino <= hora_termino_obj)
+        )
+    ).first()
+
+    if conflito:
+        return jsonify({
+            "error": "Horário indisponível. Já existe uma reunião marcada nesse horário.",
+            "reuniao_conflitante": conflito.to_dict()
+        }), 409
+
 
     # Criar nova reunião
     reuniao = Reuniao(
