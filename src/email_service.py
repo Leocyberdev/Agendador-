@@ -17,7 +17,7 @@ class EmailService:
         self.smtp_server = "smtp.gmail.com"
         self.smtp_port = 587  # TLS
         self.email_user = os.environ.get('EMAIL_USER', 'agendamontereletrica@gmail.com')
-        self.email_password = os.environ.get('EMAIL_PASSWORD', 'Agendamonter30')
+        self.email_password = os.environ.get('EMAIL_PASSWORD', 'cent dvbi wgxc acjd')
 
     def send_email(self, to_email, subject, body, is_html=False):
         try:
@@ -47,7 +47,10 @@ class EmailService:
     def send_meeting_notification(self, user_email, meeting_data):
         subject = f"Nova Reunião Agendada: {meeting_data.get('titulo', 'Sem título')}"
         data_formatada = meeting_data.get('data', 'Data não informada')
-        hora_formatada = meeting_data.get('hora', 'Hora não informada')
+        hora_inicio = meeting_data.get('hora_inicio', 'não informada')
+        hora_termino = meeting_data.get('hora_termino', 'não informada')
+        hora_formatada = f"{hora_inicio} às {hora_termino}"
+
 
         body = f"""
 Olá!
@@ -69,7 +72,7 @@ Este é um e-mail automático do Sistema Agendador de Reuniões.
 Não responda a este e-mail.
 
 Atenciosamente,
-Sistema Agendador de Reuniões
+Sistema Agendador de Reuniões Monter
         """
 
         return self.send_email(user_email, subject, body)
@@ -79,7 +82,10 @@ Sistema Agendador de Reuniões
         usuarios = db.session.query(User).all()
         subject = f"Nova Reunião Agendada: {meeting_data.get('titulo', 'Sem título')}"
         data_formatada = meeting_data.get('data', 'Data não informada')
-        hora_formatada = meeting_data.get('hora', 'Hora não informada')
+        hora_inicio = meeting_data.get('hora_inicio', 'não informada')
+        hora_termino = meeting_data.get('hora_termino', 'não informada')
+        hora_formatada = f"{hora_inicio} às {hora_termino}"
+
 
         body = f"""
 Olá!
@@ -101,7 +107,7 @@ Este é um e-mail automático do Sistema Agendador de Reuniões.
 Não responda a este e-mail.
 
 Atenciosamente,
-Sistema Agendador de Reuniões
+Sistema Agendador de Reuniões Monter
         """
 
         def enviar():
@@ -115,7 +121,9 @@ Sistema Agendador de Reuniões
     def send_meeting_reminder(self, user_email, meeting_data):
         subject = f"Lembrete: Reunião {meeting_data.get('titulo', 'Sem título')} hoje"
         data_formatada = meeting_data.get('data', 'Data não informada')
-        hora_formatada = meeting_data.get('hora', 'Hora não informada')
+        hora_inicio = meeting_data.get('hora_inicio', 'não informada')
+        hora_termino = meeting_data.get('hora_termino', 'não informada')
+        hora_formatada = f"{hora_inicio} às {hora_termino}"
 
         body = f"""
 Olá!
@@ -139,7 +147,7 @@ Este é um e-mail automático do Sistema Agendador de Reuniões.
 Não responda a este e-mail.
 
 Atenciosamente,
-Sistema Agendador de Reuniões
+Sistema Agendador de Reuniões Monter
         """
 
         return self.send_email(user_email, subject, body)
@@ -147,7 +155,10 @@ Sistema Agendador de Reuniões
     def send_meeting_cancellation(self, user_email, meeting_data):
         subject = f"Reunião Cancelada: {meeting_data.get('titulo', 'Sem título')}"
         data_formatada = meeting_data.get('data', 'Data não informada')
-        hora_formatada = meeting_data.get('hora', 'Hora não informada')
+        hora_inicio = meeting_data.get('hora_inicio', 'não informada')
+        hora_termino = meeting_data.get('hora_termino', 'não informada')
+        hora_formatada = f"{hora_inicio} às {hora_termino}"
+
 
         body = f"""
 Olá!
@@ -168,7 +179,7 @@ Este é um e-mail automático do Sistema Agendador de Reuniões.
 Não responda a este e-mail.
 
 Atenciosamente,
-Sistema Agendador de Reuniões
+Sistema Agendador de Reuniões Monter
         """
 
         return self.send_email(user_email, subject, body)
