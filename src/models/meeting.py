@@ -28,3 +28,5 @@ class Meeting(db.Model):
     def __repr__(self):
         return f"<Meeting {self.titulo}>"
         
+
+        
