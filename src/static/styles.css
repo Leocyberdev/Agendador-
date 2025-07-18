@@ -326,7 +326,7 @@ input::placeholder, textarea::placeholder {
     height: 100vh;
     background: url('/static/imagens/IMG_20250716_170041260_HDR.jpg') center/cover no-repeat;
 }
-}
+
 
 #mainScreen::before {
     content: '';
