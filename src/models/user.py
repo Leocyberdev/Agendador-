@@ -36,14 +36,14 @@ class Reuniao(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(200), nullable=False)
     data = db.Column(db.Date, nullable=False)
-    hora = db.Column(db.Time, nullable=False)
+    hora_inicio = db.Column(db.Time, nullable=False)
+    hora_termino = db.Column(db.Time, nullable=False)
     local = db.Column(db.String(200))
     participantes = db.Column(db.Text)
     descricao = db.Column(db.Text)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relacionamento com usuário
     criador = db.relationship('User', backref=db.backref('reunioes', lazy=True))
 
     def __repr__(self):
@@ -54,7 +54,8 @@ class Reuniao(db.Model):
             'id': self.id,
             'titulo': self.titulo,
             'data': self.data.isoformat() if self.data else None,
-            'hora': self.hora.strftime('%H:%M') if self.hora else None,
+            'hora_inicio': self.hora_inicio.strftime('%H:%M') if self.hora_inicio else None,
+            'hora_termino': self.hora_termino.strftime('%H:%M') if self.hora_termino else None,
             'local': self.local,
             'participantes': self.participantes,
             'descricao': self.descricao,
@@ -62,6 +63,7 @@ class Reuniao(db.Model):
             'criador_nome': self.criador.username if self.criador else None,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+
 class Meeting(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titulo = db.Column(db.String(120), nullable=False)
