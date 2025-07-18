@@ -212,8 +212,9 @@ function renderReunioes() {
                 </div>
                 <div class="reuniao-info">
                     <span>🕐</span>
-                    <span>${reuniao.hora}</span>
+                    <span>${reuniao.hora_inicio} - ${reuniao.hora_termino}</span>
                 </div>
+
                 ${reuniao.local ? `
                     <div class="reuniao-info">
                         <span>📍</span>
@@ -248,11 +249,13 @@ async function handleCreateReuniao(e) {
     const reuniaoData = {
         titulo: formData.get('titulo'),
         data: formData.get('data'),
-        hora: formData.get('hora'),
+        hora_inicio: formData.get('hora_inicio'),
+        hora_termino: formData.get('hora_termino'),
         local: formData.get('local'),
         participantes: formData.get('participantes'),
         descricao: formData.get('descricao')
     };
+    
     
     try {
         const response = await fetch('/api/reunioes', {
