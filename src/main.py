@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 import os
 import sys
 # DON'T CHANGE THIS !!!
@@ -6,11 +8,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from src.email_service import email_service
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+from src.models.user import User
 from src.models.user import db, User
 from src.routes.user import user_bp
 from src.routes.auth import auth_bp
 from src.routes.reunioes import reunioes_bp
-
 app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 app.config['SECRET_KEY'] = 'agendador-reunioes-secret-key-2025'
 
@@ -33,7 +35,7 @@ def create_admin_user():
     if not admin:
         admin = User(
             username='admin',
-            email='admin@agendador.com',
+            email='agendamontereletrica@gmail.com',
             is_admin=True
         )
         admin.set_password('admin123')  # Senha padrão - deve ser alterada
@@ -42,7 +44,7 @@ def create_admin_user():
         print("Usuário administrador criado:")
         print("Username: admin")
         print("Senha: admin123")
-        print("IMPORTANTE: Altere a senha após o primeiro login!")
+        
 
 with app.app_context():
     db.create_all()
