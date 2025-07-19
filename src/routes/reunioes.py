@@ -21,31 +21,35 @@ def create_reuniao():
     data = request.json
     titulo = data.get("titulo")
     data_str = data.get("data")
-    hora_inicio_str = data.get("hora_inicio") # ADICIONADO
-    hora_termino_str = data.get("hora_termino") # ADICIONADO
+    hora_inicio_str = data.get("hora_inicio")
+    hora_termino_str = data.get("hora_termino")
     local = data.get("local", "")
     participantes = data.get("participantes", "")
     descricao = data.get("descricao", "")
 
-    if not titulo or not data_str or not hora_inicio_str or not hora_termino_str: # MODIFICADO
-        return jsonify({"error": "Título, data, hora de início e hora de término são obrigatórios"}), 400 # MODIFICADO
+    if not titulo or not data_str or not hora_inicio_str or not hora_termino_str:
+        return jsonify({"error": "Título, data, hora de início e hora de término são obrigatórios"}), 400
 
     try:
         # Converter strings para objetos date e time
         data_obj = datetime.strptime(data_str, "%Y-%m-%d").date()
-        hora_inicio_obj = datetime.strptime(hora_inicio_str, "%H:%M").time() # ADICIONADO
-        hora_termino_obj = datetime.strptime(hora_termino_str, "%H:%M").time() # ADICIONADO
+        hora_inicio_obj = datetime.strptime(hora_inicio_str, "%H:%M").time()
+        hora_termino_obj = datetime.strptime(hora_termino_str, "%H:%M").time()
     except ValueError:
         return jsonify({"error": "Formato de data ou hora inválido"}), 400
 
-    # Verificar conflito de horário
+    # Validar se hora de início é anterior à hora de término
+    if hora_inicio_obj >= hora_termino_obj:
+        return jsonify({"error": "A hora de início deve ser anterior à hora de término"}), 400
+
+    # CORREÇÃO: Verificar conflito de horário com lógica simplificada e correta
+    # Duas reuniões se sobrepõem se:
+    # - O início da nova reunião é antes do fim da existente E
+    # - O fim da nova reunião é depois do início da existente
     conflito = Reuniao.query.filter(
         Reuniao.data == data_obj,
-        or_(
-            and_(Reuniao.hora_inicio <= hora_inicio_obj, Reuniao.hora_termino > hora_inicio_obj),
-            and_(Reuniao.hora_inicio < hora_termino_obj, Reuniao.hora_termino >= hora_termino_obj),
-            and_(Reuniao.hora_inicio >= hora_inicio_obj, Reuniao.hora_termino <= hora_termino_obj)
-        )
+        Reuniao.hora_inicio < hora_termino_obj,
+        Reuniao.hora_termino > hora_inicio_obj
     ).first()
 
     if conflito:
@@ -54,13 +58,12 @@ def create_reuniao():
             "reuniao_conflitante": conflito.to_dict()
         }), 409
 
-
     # Criar nova reunião
     reuniao = Reuniao(
         titulo=titulo,
         data=data_obj,
-        hora_inicio=hora_inicio_obj, # ADICIONADO
-        hora_termino=hora_termino_obj, # ADICIONADO
+        hora_inicio=hora_inicio_obj,
+        hora_termino=hora_termino_obj,
         local=local,
         participantes=participantes,
         descricao=descricao,
@@ -69,16 +72,16 @@ def create_reuniao():
     
     db.session.add(reuniao)
     db.session.commit()
-    email_service.send_meeting_notification_to_all({
-    "titulo": titulo,
-    "data": data_str,
-    "hora_inicio": hora_inicio_str, # ADICIONADO
-    "hora_termino": hora_termino_str, # ADICIONADO
-    "local": local,
-    "participantes": participantes,
-    "descricao": descricao
-})
     
+    email_service.send_meeting_notification_to_all({
+        "titulo": titulo,
+        "data": data_str,
+        "hora_inicio": hora_inicio_str,
+        "hora_termino": hora_termino_str,
+        "local": local,
+        "participantes": participantes,
+        "descricao": descricao
+    })
 
     return jsonify({
         "message": "Reunião criada com sucesso",
@@ -87,7 +90,6 @@ def create_reuniao():
 
 @reunioes_bp.route("/reunioes/<int:reuniao_id>", methods=["GET"])
 @login_required
-
 def get_reuniao(reuniao_id):
     reuniao = Reuniao.query.get_or_404(reuniao_id)
     return jsonify(reuniao.to_dict()), 200
@@ -108,27 +110,54 @@ def update_reuniao(reuniao_id):
     hora_inicio_str = data.get('hora_inicio')
     hora_termino_str = data.get('hora_termino')
 
+    # Preparar novos valores (usar valores atuais se não fornecidos)
+    nova_data = reuniao.data
+    nova_hora_inicio = reuniao.hora_inicio
+    nova_hora_termino = reuniao.hora_termino
+
     if titulo:
         reuniao.titulo = titulo
     
     if data_str:
         try:
-            reuniao.data = datetime.strptime(data_str, '%Y-%m-%d').date()
+            nova_data = datetime.strptime(data_str, '%Y-%m-%d').date()
         except ValueError:
             return jsonify({'error': 'Formato de data inválido'}), 400
     
     if hora_inicio_str:
         try:
-            reuniao.hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
+            nova_hora_inicio = datetime.strptime(hora_inicio_str, '%H:%M').time()
         except ValueError:
             return jsonify({'error': 'Formato de hora de início inválido'}), 400
 
     if hora_termino_str:
         try:
-            reuniao.hora_termino = datetime.strptime(hora_termino_str, '%H:%M').time()
+            nova_hora_termino = datetime.strptime(hora_termino_str, '%H:%M').time()
         except ValueError:
             return jsonify({'error': 'Formato de hora de término inválido'}), 400
 
+    # Validar se hora de início é anterior à hora de término
+    if nova_hora_inicio >= nova_hora_termino:
+        return jsonify({"error": "A hora de início deve ser anterior à hora de término"}), 400
+
+    # CORREÇÃO: Verificar conflito de horário na atualização (excluindo a própria reunião)
+    conflito = Reuniao.query.filter(
+        Reuniao.id != reuniao_id,  # Excluir a própria reunião da verificação
+        Reuniao.data == nova_data,
+        Reuniao.hora_inicio < nova_hora_termino,
+        Reuniao.hora_termino > nova_hora_inicio
+    ).first()
+
+    if conflito:
+        return jsonify({
+            "error": "Horário indisponível. Já existe uma reunião marcada nesse horário.",
+            "reuniao_conflitante": conflito.to_dict()
+        }), 409
+
+    # Aplicar as alterações
+    reuniao.data = nova_data
+    reuniao.hora_inicio = nova_hora_inicio
+    reuniao.hora_termino = nova_hora_termino
     reuniao.local = data.get('local', reuniao.local)
     reuniao.participantes = data.get('participantes', reuniao.participantes)
     reuniao.descricao = data.get('descricao', reuniao.descricao)
@@ -158,5 +187,5 @@ def delete_reuniao(reuniao_id):
 @reunioes_bp.route('/minhas-reunioes', methods=['GET'])
 @login_required
 def get_minhas_reunioes():
-    reunioes = Reuniao.query.filter_by(created_by=session['user_id']).order_by(Reuniao.data.asc(), Reuniao.hora.asc()).all()
+    reunioes = Reuniao.query.filter_by(created_by=session['user_id']).order_by(Reuniao.data.asc(), Reuniao.hora_inicio.asc()).all()
     return jsonify([reuniao.to_dict() for reuniao in reunioes]), 200
